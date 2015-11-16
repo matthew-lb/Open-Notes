@@ -1,0 +1,502 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{pgf,tikz}
+\usetikzlibrary{arrows}
+
+%%%%Theorem + Equation Styles%%%%%%%
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem*{definition}{Definition}
+
+\theoremstyle{remark}
+\newtheorem*{fact}{Fact}
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}[subsection]
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[subsection]
+
+\newenvironment{solution}
+               {\let\oldqedsymbol=\qedsymbol%
+                \def\@addpunct##1{}%
+                \renewcommand{\qedsymbol}{$\blacktriangleleft$}%
+                \begin{proof}[\bfseries\upshape Solution]}%
+               {\end{proof}%
+                \renewcommand{\qedsymbol}{\oldqedsymbol}}   %%%Taken from Evan Chen
+                
+                               
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%New Commands%%%%%%%%%
+\newcommand{\ddt}[1][t]{\frac{d}{d#1}}
+
+\newcommand{\ddtn}[2][t]{\frac{d^{#2}}{d{#1}^{#2}}}
+					
+		
+\newcommand{\pddt}[1][t]{\frac{\partial}{\partial #1}}
+
+\newcommand{\pddtn}[2][t]{\frac{\partial^{#2}}{\partial {#1}^{#2}}}
+
+\newcommand{\bb}[1]{\mathbb{#1}}
+
+\newcommand{\nullsp}[0]{\text{null}}
+
+\newcommand{\interior}[0]{\text{int}}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+
+\lhead{Differential Equations}
+\rhead{\thepage}
+\cfoot{}
+
+
+\begin{document}
+
+\title{Differential Equations}
+\author{Matthew Lerner-Brecher}
+\maketitle
+\tableofcontents
+
+\newpage
+
+\section{Prerequisite Information}
+\subsection{Vector Spaces}
+A vector space is a set along with two operations an addition and scalar multiplication over some field $\bb{F}$ that satisfies the following:
+\begin{itemize}
+\item Closure under $+$
+\item Closure under scalar multiplication
+\item Associativity over $+$
+\item Commutativity over $+$
+\item Additive identity (referred to as 0)
+\item Additive inverses
+\item An identity for scalar multiplication (referred to as 1)
+\item Mixed associativity: $\beta(\alpha\bold{v})=(\beta\alpha)\bold{v}$
+\item Mixed distributive I: $\alpha(\bold{v}+\bold{w})=\alpha\bold{v}+\alpha\bold{w}$
+\item Mixed Distributive II: $(\alpha+\beta)\bold{v}=\alpha\bold{v}+\beta\bold{v}$
+\end{itemize}
+We now give a few Definitions and Theorems about vector spaces. 
+\begin{definition}[Linear map]
+$L:\mathbb{V}\to\mathbb{W}$ where $\mathbb{V},\mathbb{W}$ are vector spaces is a  Linear map if for all $\bold{u},\bold{v}\in\mathbb{V}$ we have $f(a\bold{u}+b\bold{v})=af(\bold{u})+bf(\bold{v})$ for all $\bold{u},\bold{v}$ and $a,b\in\mathbb{R}$
+\end{definition}
+\begin{definition}[Null Space]
+The Null space of $L$ is defined as the set $\{\bold{u}\in\mathbb{V}|L(u)=0\}$
+\end{definition}
+\begin{theorem}
+The Null space of any linear map $L$ is a  subspace of $\mathbb{V}$.
+\end{theorem}
+\begin{proof}
+We just need to show that the set is closed under $+$ and scalar multiplication, since the fact that it is a subset of $L$ over the same operations implies that it satisfies the other axioms. For addition:
+\begin{align*}
+L[\bold{u}+\bold{v}] &=L[\bold{u}]+L[\bold{v}] \\
+&= 0+0 \\
+&= 0
+\end{align*}
+For scalar multiplication:
+\begin{align*}
+L[\alpha\bold{u}] &=\alpha L[\bold{u}] \\
+& = \alpha(0) \\
+&= 0
+\end{align*}
+\end{proof}
+\begin{definition}[Linearly Independent]
+A set of vectors $\{v_1,v_2,\ldots v_n\}$ is considered to be linearly independent is the only tuple of scalars $(a_1,a_2,\ldots a_n)$ that satisfies
+\begin{equation*}
+a_1v_1+a_2v_2+\cdots+a_nv_n = 0
+\end{equation*}
+is the tuple consisting solely of 0s
+\end{definition}
+\begin{definition}(Span)
+A set of vectors $V$ spans a vector space $\mathbb{W}$ is for all $w\in\mathbb{W}$ there exists scalars   $a_1,a_2,\ldots,a_n$ such that
+\begin{equation*}
+a_1v_1+a_2v_2+\cdots+a_nv_n = w
+\end{equation*}
+\end{definition}
+\begin{definition} (Basis)
+A set of vectors is a basis of $\mathbb{W}$ if they are linearly independent and span $\mathbb{W}$.
+\end{definition}
+\begin{theorem}
+All bases of a vector space have the same size.
+\end{theorem}
+\begin{proof}
+Suppose that there are multiple bases of different sizes for some vector space $\mathbb{V}$. Let $(v_1,\ldots,v_n)$ be the basis of the smallest size and let $(w_1,\ldots, w_k)$ be a basis of a larger size. Since $(v_1,\ldots,v_n)$ spans $\mathbb{V}$ all elements of $(w_1,\ldots, w_k)$ can be represented as sums of scalar multiple of $(v_1,\ldots,v_n)$. However, since there are fewer elements in $(v_1,\ldots,v_n)$, the expression 
+\begin{equation*}
+a_1w_1+a_2w_2+\cdots +a_nv_n
+\end{equation*}
+has more than 1 solution for $(a_1,a_2,\ldots, a_n)$, which is a contradiction on the fact that $(w_1,\ldots, w_k)$ is linearly independent.
+\end{proof}
+\begin{definition}(Dimension)
+The dimension of a vector space $\bb{V}$ denoted $\dim\bb{V}$ is the size of the bases of $\bb{V}$
+\end{definition}
+
+\subsection{Differentiation over Complex Numbers}
+Let $h=f+gi$ be function that maps reals to complex numbers where $f,g$ are real differentiable functions. We define the derivative over complex numbers as the same way as defined for real numbers:
+\begin{align*}
+(f+gi)' &= \displaystyle\lim_{h\to0} \frac{(f+gi)(x+h) - (f+gi)(x)}{h} \\
+&=\displaystyle\lim_{h\to0} \frac{f(x+h) - f(x)}{h} + i\displaystyle\lim_{h\to0} \frac{g(x+h) - g(x)}{h} \\
+&= f'+g'i
+\end{align*}
+We now will also show that if $r\in\bb{C}$ then,
+\begin{equation*}
+\ddt e^{rt} = re^{rt}
+\end{equation*}
+Let $r=\alpha+i\beta$. Thus
+\begin{equation*}
+e^{rt} = e^{\alpha t}\cos \beta t + i e^{\alpha t}\sin \beta t
+\end{equation*}
+Differentiating using the above rule for complex differentiation gives.
+\begin{align*}
+(e^{rt})' &= (e^{\alpha t}\cos \beta t)' + i(e^{\alpha t}\sin \beta t)' \\
+&=[\alpha\cos\beta t - \beta\sin\beta t]e^{\alpha t} + i[\alpha\sin\beta t + \beta\cos\beta t]e^{\alpha t} \\
+&= e^{\alpha t} [(\alpha + i\beta\cos\beta t) + (-\beta + i\alpha)\sin\beta t] \\
+&= e^{\alpha t}[(\alpha + i\beta)\cos\beta t + (\alpha+i\beta)i\sin\beta t] \\
+&= re^{rt}
+\end{align*}
+
+\subsection{Generalized Product Rule}
+\begin{theorem} (Generalized Product Rule)
+$\left(\ddt\right)^{\circ l}(fg) = \displaystyle\sum_{j=0}^{l}\binom{l}{j}f^{j}g^{l-j}$ where $\circ$ denotes function composition
+\end{theorem}
+\begin{proof}
+Simple induction argument
+\end{proof}
+
+\section{Basics of Analysis}
+\subsection{Uniform Norms and Types of Convergence}
+\begin{definition}(Uniform Norm)
+$||\phi || :=\sup_{t\in I}|\phi(t)|$ where $\phi(t)$ is a real-valued function on the interval $I$.
+\end{definition}
+This exists whenever $\phi$ is bounded on $I:\exists B\in R$ s.t. $| \phi(t)|\le B$ for all $t\in I$. Then $||\phi||$ is the least upper bound of $\{\phi(t):t\in I\}\subseteq R$ (the existence of least upper bounds or suprema is an axiom - called The Completeness Axiom). If $\phi$ is continuous and $I$ is a closed interval, then
+\begin{equation*}
+||\phi || :=\max_{t\in I}|\phi(t)|=|\phi(t^{*})|
+\end{equation*}
+where $t^{*}\in I$
+\begin{definition} (Uniform Convergence)
+Given a sequence of bounded functions
+\begin{equation*}
+\phi_0, \phi_1, \ldots, \phi_n, \ldots
+\end{equation*}
+all defined on the same interval, $I$ and given bounded function $\phi$ on $I$, we say $\phi_n\to^{U}\phi$ if $||\phi_n-\phi||\to 0$ as $n\to \infty$
+\end{definition}
+\begin{definition} (Pointwise Convergence)
+$\phi_n\to^{P}\phi$ means: $\forall t\in I$, $\phi_n(t)\to\phi(t)$ as $n\to \infty$
+\end{definition}
+\begin{theorem}
+Uniform Convergence implies Pointwise Convergence but not the converse
+\end{theorem}
+\begin{proof}
+The forward statement is obvious. The fact that the converse is not true can be illustrated with $I=[0,1)$ and $\phi_n=t^n$ as it converges pointwise to $\phi(t)\equiv 0$ but not uniformly.
+\end{proof}
+\begin{theorem}
+If $\phi$ is bounded and is the uniform limit of a sequence of continuous functions $\phi_n$ on  closed interval $I$, then $\phi$ must be continuous. 
+\end{theorem}
+\begin{proof}
+Pick any $\epsilon > 0$: we want to show that $\exists\delta>0$ s.t. $|\phi(t)-\phi(t^{*})| < \epsilon$ if $|t-t^*|<\delta$
+\begin{align*}
+|\phi(t)-\phi(t^*) &= |\phi(t)-\phi_n(t)+\phi_n(t)-\phi_n(t*)+\phi_n(t^*)-\phi(t*)| \\
+&\le |\phi(t)-\phi_n(t)|+|\phi_n(t)-\phi_n(t*)|+|\phi_n(t^*)-\phi(t*)| < \epsilon
+\end{align*}
+pick $N$ big enough so that $||\phi_n-\phi||<\frac{\epsilon}{3}$ for all $n\ge N$. Since $||\phi_n-\phi||<\frac{\epsilon}{3}$ is the supremum, we must have the above equation.
+\end{proof}
+\subsection{Metric Spaces and Cauchy Sequences}
+\begin{definition} (Metric Space)
+A nonempty set $X$ together with a distance function (metric) $d:X\times X\to\bb{R}$ satisfying the axioms
+\begin{itemize}
+\item $d(x,y)=d(y,x)$ for all $x,y\in\bb{R}$
+\item $d(x,y)\ge 0$ and $d(x,y)=0$ iff $x=y$ for all $x,y\in X$.
+\item $d(x,y)+d(y,z)\ge d(x,z)$ for all $x,y,z\in X$.
+\end{itemize}
+\end{definition}
+\begin{definition} (Cauchy Sequence)
+In a metric space, an infinite sequence $x_n$ is said to be cauchy if for any $\epsilon > 0 \ \ \exists N\in \bb{N}$ s.t. for any $n,m\ge N$ we have $d(x_n,x_m)<\epsilon$.
+\end{definition}
+\begin{definition}
+In a metric space a sequence converges to a limit $x\in X$ if for any $\epsilon > 0$, $\exists N\in\bb{N}$ s.t. $\forall n\ge N$, $d(x_n,x)<\epsilon$.
+\end{definition}
+\begin{theorem}
+Every convergent sequence in a metric space must be cauchy.
+\end{theorem}
+\begin{proof}
+Basic argument using $d(x,y)+d(y,z)\ge d(x,z)$ for all $x,y,z\in X$.
+\end{proof}
+\begin{definition}
+A metric space $(X,d)$ is complete if every cauchy sequence in $X$ converges to a limit in $X$.
+\end{definition}
+\begin{example}
+The reals under the standard metric $|x-d|$ is complete, but the rationals under the same metric is not.
+\end{example}
+\subsection{Convergence}
+
+\begin{lemma}
+Every sequence of real numbers has at least one monotone subsequence.
+\end{lemma}
+\begin{lemma}
+Every cauchy sequence of the reals is automatically bounded.
+\end{lemma}
+\begin{proof}
+Direct result of definition of cauchy sequence.
+\end{proof}
+\begin{lemma}
+Every sequence of reals that is bounded has a convergent subsequence.
+\end{lemma}
+\begin{lemma}
+If any subsequence of a cauchy sequence converges to $a\in\bb{R}$, then the whole sequence converges to $a$.
+\end{lemma}
+\begin{theorem}
+The space of continuous functions $C^0[a,b]$on an interval is a complete metric space under the uniform norm $d(x,y)=||x-y||=\sup_{t\in[a,b]}| x(t)-y(t)|$.
+\end{theorem}
+\begin{proof}
+Take a cauchy sequence $\phi_n$ in $C^0[a,b]$. Pick any $t\in[a,b]$ and look at the sequence $\phi_n(t)$. We claim this sequence is cauchy. For any $\epsilon > 0$, there is value $N$ s.t. for any $n,m\ge N$ we have $|\phi_n(t)-\phi_m(t)|<\epsilon$ since $|\phi_n(t)-\phi_m(t)|\le||\phi_n-\phi_m||<\epsilon$ Since every cauchy sequence of reals converges to a real limit define $\phi(t):=\lim_{n\to\infty}\phi_n(t)\in\bb{R}$. We have a new function $\phi:[a,b]\to\bb{R}$. We see by the definition of $\phi$ that $\phi_n$ converges pointwise to $\phi$  we need to show that it converges universally. Once we have this, by an earleir theorem $\phi$ is continuous. Now fix $\epsilon > 0$. By cauchyness, $\exists N$ s.t. $||\phi_n-\phi_N|| < \frac{\epsilon}{2}$ for all $n\ge N$. We must have  $|\phi(t)-\phi_N(t)|\le\frac{\epsilon}{2}$ (Why?). This implies that $\sup_{t\in[a,b]}|\phi(t)-\phi_N(t)|\le \frac{\epsilon}{2}$. By the triange inequality we now have
+\begin{align*}
+||\phi_n-\phi_N| &\le ||\phi_n-\phi_N|| + ||\phi_N-\phi|| \\
+& < \epsilon
+\end{align*}
+Thus $\phi_n$ converges uniformly.
+\end{proof}
+\section{Existence and Uniqueness}
+In this section we'll be focusing on the Picard Theorem, which is the main theorem regarding the existence and uniqueness of differential equations.
+\subsection{Basic Form of Picard Theorem}
+\begin{theorem} (Picard Theorem)
+Let $F(t,x)$ be a function defined in some rectangle $R=[a,b]\times[c,d]$. Suppose $F$ is continuous, and $F_x=\pddt[x]F$ is continuous throughout $R$. Then for any $(t_0,x_0)$ with $(t_0,x_0)\in\interior R=(a,b)\times(c,d)$, there exists exactly one function $x(t)$ on a maximal domain $[t_0-h,t_0+h]\subset[a,b]$ s.t. $x'(t)\equiv F(t,x)$ for all $t\in[t_0-h,t_0+h]$ and $x(t_0)=x_0$.
+\end{theorem}
+\begin{proof}
+Essentially over some interval and for a given $F$ we have to have the I.V.P.:
+\begin{align*}
+x'&=F(t,x) \\
+x(t_0) &= x_0
+\end{align*}
+These equations imply that $x(t)$ is differentiable and therefore continuous. This then implies that $F(t,x(t))$ is integratable. Integrating it gives,
+\begin{equation*}
+x(t)-x(t_0)= \int_{t_0}^{t}F(\tau,x(\tau))d\tau
+\end{equation*}
+Thus the I.V.P. imply that $x$ is continuous and the following equation equation:
+\begin{equation*}
+x(t)=x_0+\int_{t_0}^{t}F(\tau,x(\tau))d\tau \ \ \ \ \ \ \forall t\in[t_0-h,t_0+h]
+\end{equation*}
+We can then use this new set of information to arrive back at the I.V.P. by differentiating it. Thus the new set of information is equivalent to the I.V.P.
+Now define the operator
+\begin{equation*}
+T[x](t) := x_0 + \displaystyle\int_{t_0}^{t}F(\tau,x(\tau))d\tau
+\end{equation*}
+Let $M=\max_{(t,x)\in \bb{R}}|F(t,x)|\ge 0$ and let $K=\max_{(t,x)\in \bb{R}}|\pddt[x]F(t,x)|\ge 0$. By the extreme value theorem these exist. Now define $\phi_0(t):\equiv x_0$ for all $t\in\bb{R}$ and $\phi_{n+1}(t):=T[\phi_n](t)$ for all $t\in[t_0-h,t_0+h]$ where $h$ is to be determined. Furthermore let $2q$ be the $x$ length of $R$ we are working in and let $2p$ be the $y$ length.
+We have
+\begin{align*}
+|\phi_{n+1}(t)-x_0| &= |\displaystyle\int_{t_0}^{t}F(\tau,\phi_n(\tau))d\tau| \\
+&\le |\displaystyle\int_{t_0}^{t}|F(\tau,\phi_n(\tau))|d\tau| \\
+&\le M\int_{t_0}^t1d\tau \\
+&\le Mh
+\end{align*}
+We know that $|\phi_{n+1}(t)-x_0|\le q$ by induction so to bound $h$ suppose $h\le \frac{q}{M}$. We also clearly have $h\le p$. We now want the following to be true
+\begin{equation*}
+||T[\phi]-T[\psi]|| \le k||\phi-\psi||
+\end{equation*}
+For some $k\in(0,1)$ where $\psi\in C^0[t_0-h,t_0+h]$
+We have
+\begin{align*}
+|T[\phi](t)-T[\psi](t)|&=|\displaystyle\int_{t_0}^{t}F(\tau,\phi(\tau))-F(\tau,\psi(\tau))d\tau| \\
+& \le |\displaystyle\int_{t_0}^{t}|F(\tau,\phi(\tau))-F(\tau,\psi(\tau))|d\tau|
+\end{align*}
+By the mean value theorem we get
+\begin{align*}
+|\displaystyle\int_{t_0}^{t}|F(\tau,\phi(\tau))-F(\tau,\psi(\tau))|d\tau| = \int_{t_0}^t |\pddt[x](\tau,\theta)||\phi(\tau)-\psi(\tau)|d\tau| 
+\end{align*}
+and we want the RHS of the above is less than or equal to $k||\phi-\psi||h$ which will give us $h<\frac{1}{K}$. So let $h\min(p,\frac{q}{M},\frac{1}{2k})$.
+\end{proof}
+\subsection{Vector Form of Picard Theorem}
+\begin{theorem} (Picard Theorem)
+Let $\bold{F}(t,\bold{x})=F(t,x_1,x_2,\ldots,x_n)$ be continuous and have continuous partial derivatives with respect to $x_1,x_2,\ldots,x_n$ in some box $B=[a,b]\times[c_1,d_1]\times\cdots\times[c_n,d_n]\subset\bb{R}^{n+1}$. Then for any $(t_0,x_0)=(t_0,x_{1|0},x_{2|0},\ldots,x_{n|0})\in\interior B$, there is exactly one function $\bold{x}(t)$ defined on a maximal domain $[t_0-h,t_0+h]$ s.t. $\bold{x}'(t)=\bold{F}(t,\bold{x}(t))$ for all $t\in[t_0-h,t_0+h]$ and $\bold{x}(t_0)=\bold{x_0}= <x_{1|0},x_{2|0},\ldots,x_{n|0}>$.
+\end{theorem}
+\begin{proof}
+We are looking at the Initial Value Problem:
+\begin{align*}
+\bold{x'}&=\bold{F}(t,\bold{x}) \\
+\bold{x}(t_0)&=\bold{x}_0
+\end{align*}
+For all $t$ in some interval $I$ define
+\begin{align*}
+\bold{\phi}(t)&=<\phi_1(t),\ldots,\phi_n(t)> \\
+||\bold{\phi}(t)|| &= \sqrt{\phi_1(t)^2+\cdots+\phi_n(t)^2} \\
+||\phi||_I&=\sup_{t\in I} ||\phi(t)||<\infty
+\end{align*}
+$\phi$ is bounded (on $I$) if all its component functions $\phi_1,\ldots, \phi_n$ are bounded on $I$ (Assume this).
+Let
+\begin{align*}
+\phi_0(t)&\equiv x_0 \\
+\phi_{n+1}(t)&\equiv x_0+\int_{t_0}^{t}\bold{F}(\tau,\phi_n(\tau))d\tau
+\end{align*}
+Assume $\bold{F}$ is continuous on a box $B$ in $\bb{R}^{n+1}$ centered at $(t_0,\bold{x}_0)$.
+\begin{equation*}
+\max_{(t,\bold{x})\in B} ||\bold{F}||=M\ge 0.
+\end{equation*}
+Let the box $B$ have dimensions $2p\times 2q\times2q\times\cdots\times2q$. Assume $|\phi_{k|j}-\phi_{j|0}|\le q$ for all $j\in\{1,2,\ldots,n\}$. This gives $||\phi_k(t)-\bold{x}_0||\le \sqrt{n}q$. We now want to get the same fact for further cases via induction. We have,
+\begin{align*}
+||\phi_{k+1}(t)-\bold{x}_0||&=||\int_{t_0}^t\bold{F}(\tau,\phi_k(\tau))d\tau|| \\
+&\le |\int_{t_0}^t||\bold{F}(\tau,\phi_k(\tau))||d\tau| \\
+&\le Mh \\
+&\le q
+\end{align*}
+(In the last step we choose $h\le\frac{q}{M}$). This now implies $|\phi_{k+1|j}(t)-x_{j|0}|\le ||x_{k+1}(t)-\bold{x}_0||\le q$. Now consider $\pddt[\bold{x}]\bold{F}$ (the Jacobian Matrix). We'll set up our recursive equations as follows:
+\begin{align*}
+\phi_0(t)&\equiv x_0 \\
+\phi_{n+1}(t) &\equiv x_0+\int_{t_0}^t F(\tau,\phi_n(\tau))d\tau
+\end{align*}
+We pick $h=\min(p,\frac{q}{M},\frac{1}{2n^2K}) > 0$. We want to show by induction that $|\phi_{k|j}-x_{0|j}|\le q$. The base case comes from our choice of $h$ and for the inductive step:
+\begin{align*}
+|\phi_{k+1|j}-x_{0|j}|  &= |\int_{t_0}^t F_j(\tau,\phi_k(\tau))d\tau| \\
+&\le Mh \\
+&\le q
+\end{align*} 
+...
+\end{proof}
+\section{Linear Equations with Constant Coefficients}
+\subsection{Definition}
+In this section we will focus on solving Linear Equations with Constant Coefficients. That is equations of the form:
+\begin{equation*}
+x^{(n)}+a_{n-1}x^{(n-1)} +... + a_2x''+a_1x'+a_0x = f(t)
+\end{equation*}
+for real constants $a_{n-1},\ldots,a_0$. For the first 2 sections we will focus on solving homogeneous equations (i.e. those with $f(t)=0$).
+\subsection{Homogeneous of order 2}
+We will begin by defining some notation to be used later on.
+
+\begin{definition}[Operator]
+$f$ is a function that maps ordinary functions to other functions.
+\end{definition}
+
+We are dealing with equations of the form $x''+ax'+bx = 0$ where $(a,b\in \mathbb{R})$. Let $L[x]=x''+ax'+b$ be a linear differential operator. We can view $L$ as a linear map on the vector space $\mathbb{D}^2(I)$: the set of all twice-differentiable ordinary functions with domain $I$. We want to find the null space of $L$. By the Picard Theorem, the dimension of this vector space is 2, so if we can find two linearly independent solutions, we can easily find all solutions. 
+
+Furthermore let $t\to x(t) \in \mathbb{D}^2$. The latter equation implies
+\begin{align*}
+L[x] &= \ddtn{2}  x(t)+a\ddt x(t)+bx(t) \\
+L &= \frac{d^2}{dt^2} + a \frac{d}{dt} + b(Id)
+\end{align*}
+Last class we took $L[e^{rt}]=p_L(r)e^{rt}$ and got $p_L(r)=r^2+ar+b$. We will try to use the roots of $p_L(r)$ to find two solutions to the desired equation. Choose $r=r_1$ a root of $p_L$ then $x_1 = e^{r_1t}$ is a solution to $L[x_1]=p_L(r_1)e^{r_1t}\equiv 0$. This gives $x_2(t)=e^{r_2t}$ where $p_L(r_2)=0$. \\
+\\
+Now our methods have only given us real solutions. Now we attempt to find all solutions:
+\begin{itemize}
+\item If $(a^2 >4b)$, The roots are real and distinct, say $r_1>r_2$
+\begin{equation*}
+r_1 = \frac{-a+\sqrt{a^2-4b}}{2}, r_2 = \frac{-a-\sqrt{a^2-4b}}{2}
+\end{equation*}
+We get two linearly independent solutions, $x_1(t)=e^{rt}$, $x_2(t)=e^{r_2t}$. Since the solutions of $L[x]=0$ forms a vector space of dimension 2, all solutions must be of the form: $x(t)=c_1e^{r_1t}+c_2e^{r_2t}$ for all $(c_1,c_2\in\mathbb{R})$.
+\item If $(a^2=4b)$, so $r_1=r_2=\frac{-a}{2}\in\mathbb{R}$. Now we only have one solution, so we need a second root to find all solutions.
+\begin{fact}
+If $r_1$ is a repeated root of $p_L(r)$, then $r_1$ is also a root of $\frac{d}{dr}p_L(r)$.
+\end{fact}
+We will now use this fact to find another solutions. We have 
+\begin{equation*}
+L[e^{rt}]\equiv_{r,t} p_Le^{rt}
+\end{equation*}
+Taking the partial derivative with respect to $r$
+\begin{align*}
+\frac{\partial}{\partial r}L[e^{rt}]&\equiv \frac{\partial}{\partial r}{[p_L(r)e^{rt}]} \\
+\frac{\partial}{\partial r} \circ L &= \frac{\partial}{\partial r}\circ \left[\pddtn{2}+a\frac{\partial}{\partial t}+b(Id)\right] \\
+&= \frac{\partial}{\partial r}\circ \left(\frac{\partial}{\partial t}\circ \frac{\partial}{\partial t} \right)+a\left [\frac{\partial}{\partial r} \circ\frac{\partial}{\partial t} \right] + b\left[\frac{\partial}{\partial r} \circ Id \right]
+\end{align*}
+where $\circ$ denotes function composition and $Id$ denotes the identity function. Since function composition is associative and we can switch the order in how we partial differentiate, this is equivalent to
+\begin{align*}
+L\circ \frac{\partial}{\partial r} &= \left(\frac{\partial}{\partial t} \circ \frac{\partial}{\partial t} \right)\circ \frac{\partial}{\partial r} + a\left[\frac{\partial}{\partial t} \circ \frac{\partial}{\partial r} \right] + b\left[Id \circ \frac{\partial}{\partial r} \right]
+\end{align*}
+Now going back to $L[e^{rt}]\equiv_{r,t} p_Le^{rt}$ and applying this idea gives us 
+\begin{equation*}
+L[te^{rt}]\equiv \left(\frac{\partial}{\partial r}p_L(r)+tp_L(r)\right)e^{rt}
+\end{equation*}
+Based on the above fact, $r_1$ is a root of both $\frac{\partial}{\partial r}p_L(r), p_L(r)$. Thus taking $r=r_1$ gives us $L[te^{r_1t}]\equiv 0$. Now we have two linearly independent solutions, so based upon the above give all solutions are of the form
+\begin{equation*}
+x(t) = c_1e^{r_1t}+c_2te^{r_1t}
+\end{equation*}
+for all $(c_1,c_2\in\mathbb{R})$
+\item If $a^2 < 4b$, then 
+\begin{align*}
+r_1&=\alpha + i\beta \\
+r_2&=\alpha - i\beta \\
+\end{align*}
+Where $\alpha = \frac{-a}{2}\in{R}$. We also have
+\begin{equation*}
+\beta = \frac{\sqrt{4b-a^2}}{2}
+\end{equation*}
+We know 
+\begin{align*}
+z(t)&=e^{r_1t} \\
+&= e^{\alpha t}(\cos\beta t + i\sin\beta t)
+\end{align*}
+Is a complex root of $p_L(r)$ and therefore a complex solution to the equation. Now let
+\begin{align*} 
+x(t) &= e^{\alpha t}(\cos\beta t) \\
+y(t) &= e^{\alpha t}(\sin\beta t)
+\end{align*}. 
+Now we have
+\begin{align*}
+L[z(t)] &\equiv 0 \\
+L[x(t)+iy(t)] &\equiv 0 \\
+L[x] + iL[y] &\equiv 0
+\end{align*}
+Since both $x,y$ are real-valued, both $L[x], L[y]$ are real valued. This implies that 
+\begin{equation*}
+L[x] \equiv L[y] \equiv 0
+\end{equation*}
+Thus both $e^{\alpha t}(\sin\beta t)$ and $e^{\alpha t}(\cos\beta t)$ are solutions which implies the general solution is $L\equiv 0$ of the form $c_1e^{\alpha t}(\sin\beta t) + c_2e^{\alpha t}(\cos\beta t)$
+\end{itemize} 
+
+\subsection{Homogeneous of order $\ge$ 3}
+We will now give a basic idea of how to find $n$ fundamental real-valued solutions of a linear n-th order homogeneous equation with constant coefficients. Let $L:\bb{D}^n(I)\to\bb{F}(I)$ where $I$ is a $t-$interval be defined as:
+\begin{align*}
+L[x] = x^{(n)}+a_1x^{(n-1)}+\cdots+a_{n-1}x'+a_nx
+\end{align*}
+We want to find all solutions to $L[x]\equiv 0$, since $L$ is a linear map this is equivalent to finding null$L$. By the Picard theorem, the dimension of null$L$ is $n$. As a result we if we can find a set $W$ of $n$ linearly independent solutions to the equation, then the set span$W$. We will now proceed to find $n$ such solutions. Let $p_L(r)$ be defined such that $L[e^{rt}]=p_L(r)e^{rt}$. As before this gives us:
+\begin{align*}
+p_L(r) &= r^n+a_1r^{n-1}+\cdots+a_{n-1}r+a_n \\
+&= (r-\rho_1)^{m_1}\cdots(r-\rho_R)^{m_R}((r-\alpha_1)^2+\beta_1)^{\mu_1}\ldots((r-\alpha_c)^2+\beta_c)^{\mu_c}
+\end{align*}
+where the $\rho_k$ is a real root and $\alpha_k+i\beta_k$ is a complex root. For each real root $\rho_j$ contributes exactly $m_j$ fundamental solutions which will be:
+\begin{equation*}
+e^{\rho_jt}, \ \ te^{\rho_jt}, \ \ t^2e^{\rho_jt},  \ldots  t^{m_j}e^{\rho_jt}
+\end{equation*}
+Each pair of conjugate roots will contribute exactly $2\mu_j$ fundamental solutions which will be:
+\begin{align*}
+e^{\alpha_jt}\cos\beta_jt, \ \ te^{\alpha_jt}\cos\beta_jt, \ldots,  t^{\mu_j}e^{\alpha_jt}\cos\beta_jt\\
+e^{\alpha_jt}\sin\beta_jt, \ \ te^{\alpha_jt}\sin\beta_jt, \ldots, t^{\mu_j}e^{\alpha_jt}\sin\beta_jt
+\end{align*}
+We can show that the first solution in each set can be obtained using the same logic from section 3.2 and then the others can be obtained by repeatedly differentiating $L[t^ke^{rt}]$ and using the fact that a root of multiplicity $m$ is the root of $p_L(r)$ and its first $m-1$ derivatives. \\
+\\
+Now in order to show that these span the set of all solutions, we need to show that all these solutions are linearly independent. Suppose there was a nontrivial linear relation between the fundamental solutions given above. The equation  
+\begin{equation*}
+c_1x_1(t)+c_2x_2(t)+\cdots+c_nc_n(t)=0
+\end{equation*}
+then has a solution where not all of the $c_i$ are 0. Based on what we had as the roots, the expression is equivalent to  
+\begin{equation*}
+\sum_{j=1}^{R} p_j(t)e^{\rho_jt} + \sum_{j=1}^{C} q_j(t)e^{(\alpha+i\beta_j)t} \equiv 0
+\end{equation*} 
+For some polynomials $p_i, q_i$ for all $i$ with fixed degree. Now let
+\begin{equation*}
+\delta := \max\{\rho_1,\ldots,\rho_R,\alpha_1,\ldots,\alpha_C\}
+\end{equation*} 
+and divide all the terms by $e^{\delta t}$:
+\begin{align*}
+\sum_{j=1}^{R} p_j(t)e^{(\rho_j-\delta)t} + \sum_{j=1}^{C} q_j(t)e^{(\alpha+i\beta_j-\delta)t}  \equiv && 0 \\
+P(t)+\sum_{j:a_j=\delta}q_j(t)e^{i\beta t}  \equiv&& -\sum_{j: \rho_j < \delta}e^{(\rho_j-\delta)t}
+\end{align*}
+The RHS will go to 0 as $t$ goes to infinity, while the LHS will not. Therefore we have a contradiction as desired. The given solutions then span the set of all solutions.
+\subsection{General Solution}
+\subsection{Problems}
+\begin{enumerate}
+\item Find the general solution of $x''+3x'-4x=0$
+\item Find the general solution of $x''+3x'+4x=0$
+\item Find the general solution of $x''-6x'+9x=0$
+\end{enumerate}
+\section{Answers To Problems}
+\subsection{Section 3}
+\begin{enumerate}
+\item $c_1e^{-4rt}+c_2e^{t}$ for constants $c_1,c_2$
+\item $e^{-\frac{3t}{2}}(c_1\cos\frac{\sqrt{7t}}{2}+c_2\sin\frac{\sqrt{7}t}{2})$ for constants $c_1,c_2$
+\item $e^{3t}(c_1+c_2t)$ for constants $c_1,c_2$
+\end{enumerate}
+\end{document}
